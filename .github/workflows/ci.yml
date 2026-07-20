@@ -1,0 +1,62 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  core-tests:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test domain package
+        working-directory: Packages/TasteMapCore
+        run: swift test
+
+  simulator-build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build iOS app
+        run: >-
+          xcodebuild
+          -project TasteMap.xcodeproj
+          -scheme TasteMap
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO
+          build
+
+  unsigned-ipa:
+    name: Build unsigned IPA
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build release app for iPhone
+        run: >-
+          xcodebuild
+          -project TasteMap.xcodeproj
+          -scheme TasteMap
+          -configuration Release
+          -destination 'generic/platform=iOS'
+          -derivedDataPath build
+          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_REQUIRED=NO
+          CODE_SIGN_IDENTITY=''
+          build
+      - name: Package unsigned IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/TasteMap.app Payload/
+          zip -qry TasteMap.ipa Payload
+          shasum -a 256 TasteMap.ipa > TasteMap.ipa.sha256
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: TasteMap-unsigned-ipa
+          path: |
+            TasteMap.ipa
+            TasteMap.ipa.sha256
+          if-no-files-found: error
+          retention-days: 14
