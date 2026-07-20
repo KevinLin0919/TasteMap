@@ -28,6 +28,15 @@ swift test
 
 完整 iOS build 需要 Xcode；Command Line Tools 本身無法提供 iPhone Simulator SDK。
 
+## 下載 CI 產生的 IPA
+
+每次 pull request、`main` push 或手動執行 workflow 時，GitHub Actions 會建立 `TasteMap-unsigned-ipa` artifact，內容包含：
+
+- `TasteMap.ipa`
+- `TasteMap.ipa.sha256`
+
+這是未簽章的 device build，用來驗證封裝或交給 AltStore、Sideloadly、Xcode 等工具重新簽名；無法直接安裝到未越獄的 iPhone。正式 TestFlight／App Store IPA 需要 Apple Developer certificate、provisioning profile 與 GitHub secrets。
+
 ## 文件
 
 - [產品與技術路線](docs/ROADMAP.md)
