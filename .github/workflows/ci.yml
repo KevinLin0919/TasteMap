@@ -1,0 +1,28 @@
+name: iOS CI
+
+on:
+  push:
+    branches: [main, "agent/**"]
+  pull_request:
+
+jobs:
+  core-tests:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test domain package
+        working-directory: Packages/TasteMapCore
+        run: swift test
+
+  simulator-build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build iOS app
+        run: >-
+          xcodebuild
+          -project TasteMap.xcodeproj
+          -scheme TasteMap
+          -destination 'generic/platform=iOS Simulator'
+          CODE_SIGNING_ALLOWED=NO
+          build
