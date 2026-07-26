@@ -31,8 +31,10 @@ struct TasteMapScreen: View {
                     }
                 }
                 .mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll))
-                .ignoresSafeArea(edges: .top)
+                .ignoresSafeArea()
 
+                // 篩選列浮在地圖上，而不是壓在一條不透明的導覽列下面 —— 地圖類畫面
+                // 的慣例是滿版出血，控制項以玻璃浮層疊上去。
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         filterButton("全部", value: 0)
@@ -40,10 +42,9 @@ struct TasteMapScreen: View {
                         filterButton("8.5 分以上", value: 8.5)
                     }.padding(.horizontal, 16)
                 }
-                .padding(.top, 10)
+                .padding(.top, 6)
             }
-            .navigationTitle("品味地圖")
-            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
             .sheet(item: $selectedPlace) { PlaceDetailView(place: $0) }
         }
     }
@@ -54,6 +55,6 @@ struct TasteMapScreen: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(minimumScore == value ? .white : TasteTheme.ink)
-        .background(minimumScore == value ? TasteTheme.ink : .white.opacity(0.85), in: Capsule())
+        .glassEffect(.regular.tint(minimumScore == value ? TasteTheme.ink : nil).interactive(), in: Capsule())
     }
 }
