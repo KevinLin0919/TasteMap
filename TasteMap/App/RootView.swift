@@ -1,15 +1,18 @@
 import SwiftData
 import SwiftUI
 
+/// 三個分頁各據一個維度，互不重疊：時間、空間、分類。
+///
+/// 搜尋不佔獨立分頁 —— 它負責「找特定那一間」，屬於清單頁頂部的工具，
+/// 而「找某一類」由 Collection 承接。
 enum AppTab: Hashable, CaseIterable {
-    case footprints, map, collections, search
+    case footprints, map, collections
 
     var title: String {
         switch self {
         case .footprints: "足跡"
         case .map: "地圖"
         case .collections: "清單"
-        case .search: "搜尋"
         }
     }
 
@@ -18,7 +21,6 @@ enum AppTab: Hashable, CaseIterable {
         case .footprints: "clock"
         case .map: "map"
         case .collections: "list.bullet"
-        case .search: "magnifyingglass"
         }
     }
 }
@@ -39,10 +41,6 @@ struct RootView: View {
 
             Tab(AppTab.collections.title, systemImage: AppTab.collections.symbol, value: AppTab.collections) {
                 CollectionsView().recordAction { showingNewVisit = true }
-            }
-
-            Tab(AppTab.search.title, systemImage: AppTab.search.symbol, value: AppTab.search) {
-                TasteSearchView().recordAction { showingNewVisit = true }
             }
         }
         .tint(TasteTheme.mossDark)

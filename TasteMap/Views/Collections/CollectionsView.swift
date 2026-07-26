@@ -7,6 +7,9 @@ struct CollectionsView: View {
     @Query private var places: [Place]
     @State private var selectedPlace: Place?
     @State private var selectedCollection: TasteCollection?
+    @State private var query = ""
+
+    private var trimmedQuery: String { query.trimmingCharacters(in: .whitespacesAndNewlines) }
 
     /// 「值得專程去」的門檻，對齊 ScoreCalculator.label 的最高兩檔。
     private static let worthATripScore = 4.5
@@ -28,10 +31,18 @@ struct CollectionsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 25) {
                     header
-                    if let top = ranking.first { featured(top) }
-                    if !worthATrip.isEmpty { worthATripShelf }
-                    rankingSection
-                    collectionsSection
+                    searchField
+
+                    // 搜尋一有內容就整片換成結果 —— 那是「找特定那一間」的模式，
+                    // 跟底下瀏覽用的清單是兩件事，同時顯示只會互相干擾。
+                    if trimmedQuery.isEmpty {
+                        if let top = ranking.first { featured(top) }
+                        if !worthATrip.isEmpty { worthATripShelf }
+                        rankingSection
+                        collectionsSection
+                    } else {
+                        TasteSearchView(query: trimmedQuery)
+                    }
                 }
                 .padding(20).padding(.bottom, 18)
             }
@@ -55,6 +66,26 @@ struct CollectionsView: View {
                 .font(.system(size: 36, weight: .semibold, design: .serif))
                 .foregroundStyle(TasteTheme.ink)
         }
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 9) {
+            Image(systemName: "magnifyingglass").foregroundStyle(TasteTheme.muted)
+            TextField("找店名、餐點或印象", text: $query)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .submitLabel(.search)
+                .foregroundStyle(TasteTheme.ink)
+            if !query.isEmpty {
+                Button { query = "" } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(TasteTheme.muted)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("清除搜尋")
+            }
+        }
+        .padding(14)
+        .tasteCard()
     }
 
     /// 標題取自真實資料。原本這裡寫死「本月精選 · 深夜咖啡」，與畫面上是哪家店無關。
