@@ -8,7 +8,7 @@ on:
 
 jobs:
   core-tests:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - name: Test domain package
@@ -16,7 +16,7 @@ jobs:
         run: swift test
 
   simulator-build:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - name: Build iOS app
@@ -30,7 +30,7 @@ jobs:
 
   unsigned-ipa:
     name: Build unsigned IPA
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
       - name: Build release app for iPhone
