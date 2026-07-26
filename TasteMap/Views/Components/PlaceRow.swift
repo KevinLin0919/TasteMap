@@ -20,7 +20,7 @@ struct PlaceRow: View {
                     .font(.caption)
                     .foregroundStyle(TasteTheme.muted)
                 HStack(spacing: 5) {
-                    ForEach(place.topTags.prefix(2), id: \.self) { tag in
+                    ForEach(place.topImpressions.prefix(2), id: \.self) { tag in
                         Text(tag)
                             .font(.caption2)
                             .foregroundStyle(TasteTheme.mossDark)

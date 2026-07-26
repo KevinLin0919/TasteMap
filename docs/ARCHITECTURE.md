@@ -24,7 +24,15 @@ Future: SyncClient · ImageStore
 
 ## Data model
 
-`Place` 只長期擁有 Place ID 與 provider 標記；名稱、地址、座標視為有期限的快取。`Visit` 擁有主觀資料：分數、Dish、Impression、私人評論與時間戳。
+`Place` 只長期擁有 Place ID 與 provider 標記；名稱、地址、座標視為有期限的快取。`Visit` 擁有主觀資料：分數、Dish、Impression、Note、Pitch、照片與時間戳。
+
+Note 與 Pitch 是兩個不同的欄位，不可合併：Note 私密、永不外流，Pitch 專為分享而寫。分享的投影只取 Place 名稱、Current Score、造訪次數、Dish 與 Pitch。
+
+### Schema 遷移
+
+目前倚賴 SwiftData 的輕量遷移 —— 新增欄位一律帶預設值，更名以 `@Attribute(originalName:)` 對應。**累積真實資料之前應改為 `VersionedSchema` 搭配明確的 `SchemaMigrationPlan`。**
+
+`ModelContainer` 初始化失敗時刻意直接中止，而不是重建一個空資料庫：Visit 是使用者唯一真正擁有的資產，靜默刪除遠比當掉更糟。
 
 Collection 一律由 Visit 記錄推導，不儲存明確的清單成員。使用者記錄時選了 Dish 或 Impression，對應的 Collection 自動成立。
 

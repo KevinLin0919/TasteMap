@@ -74,11 +74,23 @@ final class Place {
     var lastVisitedAt: Date? { sortedVisits.first?.visitedAt }
     var latestNote: String? { sortedVisits.lazy.map(\.note).first { !$0.isEmpty } }
 
-    var topTags: [String] {
-        let counts = visits.flatMap(\.tags).reduce(into: [String: Int]()) { $0[$1, default: 0] += 1 }
+    /// 最近一次寫下的 Pitch —— 分享時用這句。與 Note 不同，Pitch 本來就是對外的。
+    var latestPitch: String? { sortedVisits.lazy.map(\.pitch).first { !$0.isEmpty } }
+
+    /// 這家店最常被記下的 Impression。
+    var topImpressions: [String] { mostFrequent(visits.flatMap(\.impressions)) }
+
+    /// 這家店最常被點的 Dish。與 Impression 是互不相干的兩個維度。
+    var topDishes: [String] { mostFrequent(visits.flatMap(\.dishes)) }
+
+    /// 最近一次留下照片的造訪 —— 用作這家店的代表照。見 ADR 0007。
+    var coverPhoto: Data? { sortedVisits.lazy.compactMap(\.photo).first }
+
+    private func mostFrequent(_ values: [String], limit: Int = 3) -> [String] {
+        let counts = values.reduce(into: [String: Int]()) { $0[$1, default: 0] += 1 }
         return counts.sorted { lhs, rhs in
             lhs.value == rhs.value ? lhs.key < rhs.key : lhs.value > rhs.value
-        }.prefix(3).map(\.key)
+        }.prefix(limit).map(\.key)
     }
 
     var searchCandidate: TasteCandidate {
@@ -88,7 +100,8 @@ final class Place {
             category: category.rawValue,
             district: district,
             currentScore: currentScore,
-            tags: topTags,
+            impressions: topImpressions,
+            dishes: topDishes,
             visitCount: visits.count
         )
     }

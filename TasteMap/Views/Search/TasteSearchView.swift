@@ -77,7 +77,7 @@ struct TasteSearchView: View {
     /// 這句話必須只講資料真的支持的事。原本結尾寫死「而且願意再次造訪」，
     /// 但它沒有讀取任何欄位 —— 那是憑空捏造的推薦理由。
     private func recommendationReason(for place: Place) -> String {
-        let tags = place.topTags.prefix(2).joined(separator: "、")
+        let tags = place.topImpressions.prefix(2).joined(separator: "、")
         let visits = place.visits.count
         if tags.isEmpty {
             return visits > 1 ? "你去過 \(visits) 次，依現況分數排序。" : "依照你的個人分數排序。"

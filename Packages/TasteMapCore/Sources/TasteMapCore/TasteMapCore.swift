@@ -18,7 +18,8 @@ public struct TasteCandidate: Identifiable, Equatable, Sendable {
     public let category: String
     public let district: String
     public let currentScore: Double
-    public let tags: [String]
+    public let impressions: [String]
+    public let dishes: [String]
     public let visitCount: Int
 
     public init(
@@ -27,7 +28,8 @@ public struct TasteCandidate: Identifiable, Equatable, Sendable {
         category: String,
         district: String,
         currentScore: Double,
-        tags: [String],
+        impressions: [String] = [],
+        dishes: [String] = [],
         visitCount: Int
     ) {
         self.id = id
@@ -35,7 +37,8 @@ public struct TasteCandidate: Identifiable, Equatable, Sendable {
         self.category = category
         self.district = district
         self.currentScore = currentScore
-        self.tags = tags
+        self.impressions = impressions
+        self.dishes = dishes
         self.visitCount = visitCount
     }
 }
@@ -113,7 +116,11 @@ public enum TasteSearchEngine {
             .filter { candidate in
                 if let minimumScore, candidate.currentScore < minimumScore { return false }
                 if tokens.isEmpty { return true }
-                let haystack = ([candidate.name, candidate.category, candidate.district] + candidate.tags)
+                // 搜尋負責「找特定那一間」，所以比對店名、Dish 與 Impression。
+                // 「找某一類」由 Collection 承接。見 ROADMAP 的 M1。
+                let haystack = ([candidate.name, candidate.category, candidate.district]
+                    + candidate.impressions
+                    + candidate.dishes)
                     .joined(separator: " ")
                     .lowercased()
                 return tokens.allSatisfy { token in
