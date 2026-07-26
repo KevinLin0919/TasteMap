@@ -6,7 +6,7 @@ struct CollectionsView: View {
     @Query private var places: [Place]
     @State private var selectedPlace: Place?
 
-    private var ranking: [Place] { places.sorted { $0.averageScore > $1.averageScore } }
+    private var ranking: [Place] { places.sorted { $0.currentScore > $1.currentScore } }
 
     var body: some View {
         NavigationStack {
@@ -27,7 +27,7 @@ struct CollectionsView: View {
                                     Text(String(format: "%02d", index + 1)).font(.system(.caption, design: .serif, weight: .bold)).foregroundStyle(TasteTheme.clay).frame(width: 24)
                                     PlaceArtwork(place: place, height: 56).frame(width: 60).clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                                     VStack(alignment: .leading, spacing: 3) { Text(place.name).font(.system(.headline, design: .serif)); Text("\(place.district) · \(place.topTags.first ?? place.category.rawValue)").font(.caption).foregroundStyle(TasteTheme.muted) }
-                                    Spacer(); ScoreBadge(score: place.averageScore)
+                                    Spacer(); ScoreBadge(score: place.currentScore)
                                 }.padding(.vertical, 6)
                             }.buttonStyle(.plain)
                             Divider().opacity(0.55)
@@ -40,7 +40,7 @@ struct CollectionsView: View {
                             smartCollection("帶電腦工作", "laptopcomputer", "\(places.filter { $0.topTags.contains("適合工作") }.count) 個地方", TasteTheme.moss)
                             smartCollection("兩個人聊天", "bubble.left.and.bubble.right", "\(places.filter { $0.topTags.contains("適合聊天") }.count) 個地方", TasteTheme.clay)
                             smartCollection("深夜還開", "moon.stars", "1 個地方", TasteTheme.gold)
-                            smartCollection("值得專程去", "arrow.up.right", "\(places.filter { $0.averageScore >= 9 }.count) 個地方", TasteTheme.ink)
+                            smartCollection("值得專程去", "arrow.up.right", "\(places.filter { $0.currentScore >= 4.5 }.count) 個地方", TasteTheme.ink)
                         }
                     }
                 }

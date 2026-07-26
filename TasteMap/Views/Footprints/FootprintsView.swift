@@ -75,7 +75,7 @@ struct FootprintsView: View {
             Divider().frame(height: 34)
             stat(average.formatted(.number.precision(.fractionLength(1))), "平均分數")
             Divider().frame(height: 34)
-            stat("\(places.filter { $0.averageScore >= 8.5 }.count)", "值得推薦")
+            stat("\(places.filter { $0.currentScore >= 4.2 }.count)", "值得推薦")
         }
         .padding(.vertical, 14)
         .tasteCard()

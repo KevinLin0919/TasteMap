@@ -14,7 +14,7 @@ struct PlaceRow: View {
                     Text(place.name)
                         .font(.system(.headline, design: .serif, weight: .semibold))
                     Spacer()
-                    ScoreBadge(score: place.averageScore)
+                    ScoreBadge(score: place.currentScore)
                 }
                 Text("\(place.district) · \(place.category.rawValue)")
                     .font(.caption)

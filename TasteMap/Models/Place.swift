@@ -63,7 +63,13 @@ final class Place {
         set { categoryRawValue = newValue.rawValue }
     }
 
-    var averageScore: Double { ScoreCalculator.average(visits.map(\.score)) }
+    /// 見 ADR 0006 —— 時間加權的現況分數，**不是平均值**。近期造訪權重高，
+    /// 因為它要回答的是「我現在該不該去」。
+    var currentScore: Double {
+        ScoreCalculator.currentScore(
+            of: visits.map { ScoredVisit(score: $0.score, visitedAt: $0.visitedAt) }
+        )
+    }
     var sortedVisits: [Visit] { visits.sorted { $0.visitedAt > $1.visitedAt } }
     var lastVisitedAt: Date? { sortedVisits.first?.visitedAt }
     var latestNote: String? { sortedVisits.lazy.map(\.note).first { !$0.isEmpty } }
@@ -81,7 +87,7 @@ final class Place {
             name: name,
             category: category.rawValue,
             district: district,
-            averageScore: averageScore,
+            currentScore: currentScore,
             tags: topTags,
             visitCount: visits.count
         )

@@ -1,4 +1,5 @@
 import SwiftUI
+import TasteMapCore
 
 struct PlaceDetailView: View {
     let place: Place
@@ -20,7 +21,16 @@ struct PlaceDetailView: View {
                     Button("關閉", systemImage: "xmark") { dismiss() }.labelStyle(.iconOnly)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    ShareLink(item: "我會推薦 \(place.name)，我的 TasteMap 評分是 \(place.averageScore.formatted(.number.precision(.fractionLength(1))))。")
+                    // 原本無論幾分都寫「我會推薦」。分數開放到 0 之後那句話會直接說謊，
+                    // 所以改成陳述事實。完整的分享格式（Dish、Pitch、Google Maps 連結）
+                    // 要等對應欄位存在才做，見 ADR 0003。
+                    ShareLink(
+                        item: """
+                        \(place.name)
+                        我的 TasteMap 評分 \(place.currentScore.formatted(.number.precision(.fractionLength(1)))) / 5 · 去過 \(place.visits.count) 次
+                        \(ScoreCalculator.label(for: place.currentScore))
+                        """
+                    )
                 }
             }
             .sheet(isPresented: $addingVisit) { NewVisitSheet(initialPlace: place) }
@@ -30,7 +40,7 @@ struct PlaceDetailView: View {
     private var hero: some View {
         ZStack(alignment: .bottomLeading) {
             PlaceArtwork(place: place, height: 285)
-            Text(place.averageScore, format: .number.precision(.fractionLength(1)))
+            Text(place.currentScore, format: .number.precision(.fractionLength(1)))
                 .font(.system(size: 36, weight: .semibold, design: .serif))
                 .foregroundStyle(.white)
                 .monospacedDigit()

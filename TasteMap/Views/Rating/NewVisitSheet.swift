@@ -9,7 +9,7 @@ struct NewVisitSheet: View {
 
     private let initialPlace: Place?
     @State private var selectedPlace: Place?
-    @State private var score = 8.5
+    @State private var score = ScoreCalculator.defaultScore
     @State private var revisitIntent = RevisitIntent.definitely
     @State private var selectedTags: Set<String> = []
     @State private var note = ""
@@ -86,15 +86,25 @@ struct NewVisitSheet: View {
     private var scoreControl: some View {
         VStack(spacing: 7) {
             Text("這次感覺如何？").font(.caption).foregroundStyle(TasteTheme.muted)
-            Text(score, format: .number.precision(.fractionLength(1)))
-                .font(.system(size: 58, weight: .semibold, design: .serif))
-                .foregroundStyle(TasteTheme.gold).monospacedDigit()
+            // 分母寫出來，「4.3」才不需要猜滿分是多少 —— 分享出去時同理。見 ADR 0004。
+            HStack(alignment: .firstTextBaseline, spacing: 3) {
+                Text(score, format: .number.precision(.fractionLength(1)))
+                    .font(.system(size: 58, weight: .semibold, design: .serif))
+                    .foregroundStyle(TasteTheme.gold).monospacedDigit()
+                Text("/ 5")
+                    .font(.system(size: 22, weight: .semibold, design: .serif))
+                    .foregroundStyle(TasteTheme.gold.opacity(0.55))
+            }
             Text(ScoreCalculator.label(for: score)).font(.subheadline.weight(.semibold))
-            Slider(value: $score, in: 5...10, step: 0.1)
+            Slider(value: $score, in: ScoreCalculator.range, step: 0.1)
                 .tint(TasteTheme.moss)
                 .accessibilityValue(score.formatted(.number.precision(.fractionLength(1))))
-            HStack { Text("5.0"); Spacer(); Text("普通"); Spacer(); Text("10.0") }
-                .font(.caption2).foregroundStyle(TasteTheme.muted)
+            HStack {
+                Text(ScoreCalculator.range.lowerBound, format: .number.precision(.fractionLength(1)))
+                Spacer()
+                Text(ScoreCalculator.range.upperBound, format: .number.precision(.fractionLength(1)))
+            }
+            .font(.caption2).foregroundStyle(TasteTheme.muted)
         }
         .padding(17)
         .background(LinearGradient(colors: [TasteTheme.gold.opacity(0.12), .white.opacity(0.56)], startPoint: .topLeading, endPoint: .bottomTrailing), in: TasteTheme.cardShape)

@@ -32,7 +32,7 @@ struct TasteSearchView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             suggestion("適合工作")
-                            suggestion("8.5分以上")
+                            suggestion("4.2分以上")
                             suggestion("中山 咖啡")
                             suggestion("甜點")
                         }
@@ -54,7 +54,7 @@ struct TasteSearchView: View {
                                     Text("\(index + 1)").font(.caption2.bold()).foregroundStyle(.white).frame(width: 23, height: 23).background(.black.opacity(0.65), in: RoundedRectangle(cornerRadius: 8)).padding(6)
                                 }
                                 VStack(alignment: .leading, spacing: 5) {
-                                    HStack { Text(place.name).font(.system(.headline, design: .serif)); Spacer(); ScoreBadge(score: place.averageScore) }
+                                    HStack { Text(place.name).font(.system(.headline, design: .serif)); Spacer(); ScoreBadge(score: place.currentScore) }
                                     Text("\(place.district) · 去過 \(place.visits.count) 次").font(.caption).foregroundStyle(TasteTheme.muted)
                                     Text(recommendationReason(for: place)).font(.caption).foregroundStyle(TasteTheme.ink.opacity(0.75)).lineLimit(2)
                                 }
@@ -74,8 +74,16 @@ struct TasteSearchView: View {
         Button { query = text } label: { Text(text).font(.caption.weight(.semibold)).padding(.horizontal, 12).padding(.vertical, 8).background(TasteTheme.moss.opacity(0.1), in: Capsule()) }.buttonStyle(.plain)
     }
 
+    /// 這句話必須只講資料真的支持的事。原本結尾寫死「而且願意再次造訪」，
+    /// 但它沒有讀取任何欄位 —— 那是憑空捏造的推薦理由。
     private func recommendationReason(for place: Place) -> String {
         let tags = place.topTags.prefix(2).joined(separator: "、")
-        return tags.isEmpty ? "依照你的個人分數排序。" : "因為你標記了「\(tags)」，而且願意再次造訪。"
+        let visits = place.visits.count
+        if tags.isEmpty {
+            return visits > 1 ? "你去過 \(visits) 次，依現況分數排序。" : "依照你的個人分數排序。"
+        }
+        return visits > 1
+            ? "因為你標記了「\(tags)」，而且回訪過 \(visits) 次。"
+            : "因為你標記了「\(tags)」。"
     }
 }
