@@ -93,6 +93,28 @@ final class Place {
         }.prefix(limit).map(\.key)
     }
 
+    /// 提供給 Collection 推導的素材：每個詞對應這家店最近一次記下它的時間。
+    var collectionSource: CollectionSource {
+        var dishes: [String: Date] = [:]
+        var impressions: [String: Date] = [:]
+
+        for visit in visits {
+            for dish in visit.dishes {
+                dishes[dish] = max(dishes[dish] ?? .distantPast, visit.visitedAt)
+            }
+            for impression in visit.impressions {
+                impressions[impression] = max(impressions[impression] ?? .distantPast, visit.visitedAt)
+            }
+        }
+
+        return CollectionSource(
+            placeID: id,
+            currentScore: currentScore,
+            dishes: dishes,
+            impressions: impressions
+        )
+    }
+
     var searchCandidate: TasteCandidate {
         TasteCandidate(
             id: id,
