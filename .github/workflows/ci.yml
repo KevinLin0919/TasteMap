@@ -19,6 +19,13 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+      - name: Regenerate Xcode project
+        # project.yml 是專案結構的唯一事實來源。committed 的 .pbxproj 只是
+        # 方便本機開 Xcode 用的，新增檔案時很容易忘記同步 —— 在這裡重新產生，
+        # 就不會因為漏加檔案而在編譯期才發現。
+        run: |
+          brew install --quiet xcodegen
+          xcodegen generate
       - name: Build iOS app
         run: >-
           xcodebuild
@@ -33,6 +40,13 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+      - name: Regenerate Xcode project
+        # project.yml 是專案結構的唯一事實來源。committed 的 .pbxproj 只是
+        # 方便本機開 Xcode 用的，新增檔案時很容易忘記同步 —— 在這裡重新產生，
+        # 就不會因為漏加檔案而在編譯期才發現。
+        run: |
+          brew install --quiet xcodegen
+          xcodegen generate
       - name: Build release app for iPhone
         run: >-
           xcodebuild
