@@ -171,8 +171,13 @@ struct CollectionsView: View {
     }
 
     private func subtitle(for place: Place) -> String {
-        let facet = place.topDishes.first ?? place.topImpressions.first ?? place.category.rawValue
-        return "\(place.district) · \(facet)"
+        // 你自己記下的東西比 Google 給的類型更有意義 —— 有 Dish 或 Impression 就先用它們。
+        guard let facet = place.topDishes.first ?? place.topImpressions.first else {
+            return place.summary
+        }
+        return [PlaceCachePolicy.locality(from: place.address), facet]
+            .compactMap { $0 }
+            .joined(separator: " · ")
     }
 
     private var collectionsSection: some View {

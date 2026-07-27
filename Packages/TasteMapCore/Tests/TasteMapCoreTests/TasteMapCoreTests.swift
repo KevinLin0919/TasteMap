@@ -102,11 +102,11 @@ private func visit(_ score: Double, monthsAgo months: Double) -> ScoredVisit {
 // MARK: - Search
 
 private let yama = TasteCandidate(
-    name: "山嶼咖啡", category: "咖啡廳", district: "中山",
+    name: "山嶼咖啡", typeName: "咖啡廳", address: "台北市中山區某某路 1 號",
     currentScore: 4.4, impressions: ["適合工作", "有插座"], dishes: ["手沖", "布丁"], visitCount: 3
 )
 private let dessert = TasteCandidate(
-    name: "森白甜點", category: "甜點", district: "大安",
+    name: "森白甜點", typeName: "甜點店", address: "台北市大安區某某路 2 號",
     currentScore: 4.1, impressions: ["採光好"], dishes: ["焦糖布丁"], visitCount: 2
 )
 
@@ -131,9 +131,9 @@ private let dessert = TasteCandidate(
 }
 
 @Test func visitCountBreaksTiesWithoutInflatingTheScore() {
-    let often = TasteCandidate(name: "常去", category: "餐廳", district: "中山", currentScore: 4.2, impressions: [], visitCount: 9)
-    let once = TasteCandidate(name: "去過一次", category: "餐廳", district: "中山", currentScore: 4.2, impressions: [], visitCount: 1)
-    let better = TasteCandidate(name: "更高分", category: "餐廳", district: "中山", currentScore: 4.3, impressions: [], visitCount: 1)
+    let often = TasteCandidate(name: "常去", typeName: "餐廳", address: "台北市中山區某某路 3 號", currentScore: 4.2, impressions: [], visitCount: 9)
+    let once = TasteCandidate(name: "去過一次", typeName: "餐廳", address: "台北市中山區某某路 3 號", currentScore: 4.2, impressions: [], visitCount: 1)
+    let better = TasteCandidate(name: "更高分", typeName: "餐廳", address: "台北市中山區某某路 3 號", currentScore: 4.3, impressions: [], visitCount: 1)
 
     // 同分時次數多的在前，但次數永遠贏不過更高的分數。
     #expect(TasteSearchEngine.search("", in: [once, often, better]).map(\.name) == ["更高分", "常去", "去過一次"])

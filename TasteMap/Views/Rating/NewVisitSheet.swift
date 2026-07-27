@@ -92,18 +92,18 @@ struct NewVisitSheet: View {
             Menu {
                 ForEach(places) { place in
                     Button { selectedPlace = place } label: {
-                        Label(place.name, systemImage: place.category.symbol)
+                        Label(place.name, systemImage: place.symbolName)
                     }
                 }
             } label: {
                 HStack {
-                    Image(systemName: selectedPlace?.category.symbol ?? "mappin")
+                    Image(systemName: selectedPlace?.symbolName ?? "mappin")
                         .foregroundStyle(TasteTheme.clay)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(selectedPlace?.name ?? "選擇地點")
                             .font(.headline).foregroundStyle(TasteTheme.ink)
                         if let selectedPlace {
-                            Text("\(selectedPlace.district) · \(selectedPlace.category.rawValue)")
+                            Text(selectedPlace.summary)
                                 .font(.caption).foregroundStyle(TasteTheme.muted)
                         }
                     }

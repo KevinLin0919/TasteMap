@@ -43,7 +43,7 @@ struct PlaceArtwork: View {
                     Circle().stroke(.white.opacity(0.85), lineWidth: 5).frame(width: 24).offset(x: 15)
                 }
                 .offset(x: 8, y: 25)
-            Image(systemName: place.category.symbol)
+            Image(systemName: place.symbolName)
                 .font(.system(size: 22, weight: .light))
                 .foregroundStyle(.white.opacity(0.7))
                 .offset(x: -60, y: -35)

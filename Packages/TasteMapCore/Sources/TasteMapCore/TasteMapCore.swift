@@ -15,8 +15,11 @@ public struct ScoredVisit: Equatable, Sendable {
 public struct TasteCandidate: Identifiable, Equatable, Sendable {
     public let id: UUID
     public let name: String
-    public let category: String
-    public let district: String
+    /// Provider 已在地化的類型名稱，例如「咖啡廳」。
+    public let typeName: String
+    /// 完整地址。比對它而不是自行切出的行政區 —— 打「中山」也應該找得到
+    /// 「台北市中山區…」，子字串比對天然就做到了。
+    public let address: String
     public let currentScore: Double
     public let impressions: [String]
     public let dishes: [String]
@@ -25,8 +28,8 @@ public struct TasteCandidate: Identifiable, Equatable, Sendable {
     public init(
         id: UUID = UUID(),
         name: String,
-        category: String,
-        district: String,
+        typeName: String,
+        address: String,
         currentScore: Double,
         impressions: [String] = [],
         dishes: [String] = [],
@@ -34,8 +37,8 @@ public struct TasteCandidate: Identifiable, Equatable, Sendable {
     ) {
         self.id = id
         self.name = name
-        self.category = category
-        self.district = district
+        self.typeName = typeName
+        self.address = address
         self.currentScore = currentScore
         self.impressions = impressions
         self.dishes = dishes
@@ -118,7 +121,7 @@ public enum TasteSearchEngine {
                 if tokens.isEmpty { return true }
                 // 搜尋負責「找特定那一間」，所以比對店名、Dish 與 Impression。
                 // 「找某一類」由 Collection 承接。見 ROADMAP 的 M1。
-                let haystack = ([candidate.name, candidate.category, candidate.district]
+                let haystack = ([candidate.name, candidate.typeName, candidate.address]
                     + candidate.impressions
                     + candidate.dishes)
                     .joined(separator: " ")

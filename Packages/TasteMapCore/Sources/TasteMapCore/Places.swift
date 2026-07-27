@@ -68,6 +68,44 @@ public struct PlacesError: Error, Equatable, Sendable {
     }
 }
 
+/// 租來的地點資料能保存多久，以及怎麼從地址擠出可讀的地區名。
+public enum PlaceCachePolicy {
+    /// Google Maps Platform Service Specific Terms §5.4：座標最多快取
+    /// **30 個連續日曆天**，之後必須刪除。`place_id` 則不受限制。
+    ///
+    /// 這不是效能調校的參數，是合約義務 —— 調大它等於違約。
+    public static let maximumAge: TimeInterval = 30 * 24 * 60 * 60
+
+    public static func isStale(cachedAt: Date, now: Date = .now) -> Bool {
+        now.timeIntervalSince(cachedAt) > maximumAge
+    }
+
+    /// 從完整地址取出行政區，例如「台北市中山區某某路 1 號」→「中山區」。
+    ///
+    /// 純顯示用。完整地址太長塞不進列表，而使用者認得的是「中山區」這種層級。
+    public static func locality(from address: String) -> String? {
+        for suffix in ["區", "鄉", "鎮", "市", "縣"] {
+            guard let range = address.range(of: suffix) else { continue }
+
+            var head = String(address[address.startIndex..<range.lowerBound])
+
+            // 去掉前面的縣市層級，否則「嘉義市西區」會被切成「市西區」——
+            // 單字的區名（西區、東區、南區）在台灣很常見。
+            for boundary in ["市", "縣"] where boundary != suffix {
+                if let found = head.range(of: boundary, options: .backwards) {
+                    head = String(head[found.upperBound...])
+                }
+            }
+
+            // 格式異常時的安全網；正常地址切完剛好就是區名。
+            let name = String(head.suffix(3))
+            guard !name.isEmpty else { continue }
+            return name + suffix
+        }
+        return nil
+    }
+}
+
 public enum PlacesResponseParser {
     /// 只索取實際會用到的欄位。Places API (New) 依欄位計費，索取越多層級越貴，
     /// 而且沒有預設值 —— 省略 field mask 會直接回錯誤。

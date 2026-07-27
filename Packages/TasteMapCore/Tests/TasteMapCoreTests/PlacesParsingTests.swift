@@ -135,3 +135,32 @@ private func json(_ string: String) -> Data { Data(string.utf8) }
     #expect(!PlacesResponseParser.fieldMask.contains("photos"))
     #expect(!PlacesResponseParser.fieldMask.contains("reviews"))
 }
+
+// MARK: - 快取政策
+
+@Test func coordinatesGoStaleAtThirtyDays() {
+    // §5.4 明文規定的 30 個連續日曆天。這不是效能參數，是合約義務。
+    let day: TimeInterval = 24 * 60 * 60
+    let now = Date(timeIntervalSince1970: 1_800_000_000)
+
+    #expect(!PlaceCachePolicy.isStale(cachedAt: now.addingTimeInterval(-29 * day), now: now))
+    #expect(PlaceCachePolicy.isStale(cachedAt: now.addingTimeInterval(-31 * day), now: now))
+    #expect(PlaceCachePolicy.maximumAge == 30 * day)
+}
+
+@Test func localityIsExtractedFromATaiwaneseAddress() {
+    #expect(PlaceCachePolicy.locality(from: "台北市中山區某某路 1 號") == "中山區")
+    #expect(PlaceCachePolicy.locality(from: "新北市板橋區文化路一段 100 號") == "板橋區")
+    #expect(PlaceCachePolicy.locality(from: "宜蘭縣礁溪鄉溫泉路 5 號") == "礁溪鄉")
+}
+
+@Test func localityFallsBackToCityWhenThereIsNoDistrict() {
+    #expect(PlaceCachePolicy.locality(from: "嘉義市西區某某街") == "西區")
+    #expect(PlaceCachePolicy.locality(from: "基隆市信義街 3 號") == "基隆市")
+}
+
+@Test func localityReturnsNilRatherThanGuessingOnForeignAddresses() {
+    // 地址格式不符時回 nil，讓呼叫端顯示別的東西，而不是硬切出一段亂碼。
+    #expect(PlaceCachePolicy.locality(from: "367 Pitt St, Sydney NSW 2000") == nil)
+    #expect(PlaceCachePolicy.locality(from: "") == nil)
+}
