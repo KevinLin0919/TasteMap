@@ -10,6 +10,7 @@
 		0076FAD647F584EA15B892B5 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3414B81C1894B14575B86B7F /* SeedData.swift */; };
 		B03E4DC5E1DC7803B4E4525A /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2670D9B56634D19BDC405620 /* PhotoStore.swift */; };
 		69572C44C59FA5849D3F16FD /* AppSecrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEBB4CBBDF45808BACA8612 /* AppSecrets.swift */; };
+		A85EA17EC487393415BB5303 /* GooglePlacesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA1840FAFCDD5FE97D501C5 /* GooglePlacesProvider.swift */; };
 		1303E5ED415CD94B7F64117C /* NewVisitSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B7F8AE2AC1414A32C26FCB /* NewVisitSheet.swift */; };
 		2051B27CA94FCAC2935B2D30 /* Visit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC0C79C19A238764D31F25F /* Visit.swift */; };
 		20B94EBE1342D872FB2D3080 /* TasteSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676079D3DC31EA02FA9112DF /* TasteSearchView.swift */; };
@@ -38,6 +39,7 @@
 		3414B81C1894B14575B86B7F /* SeedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedData.swift; sourceTree = "<group>"; };
 		2670D9B56634D19BDC405620 /* PhotoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
 		1AEBB4CBBDF45808BACA8612 /* AppSecrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSecrets.swift; sourceTree = "<group>"; };
+		ABA1840FAFCDD5FE97D501C5 /* GooglePlacesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GooglePlacesProvider.swift; sourceTree = "<group>"; };
 		676079D3DC31EA02FA9112DF /* TasteSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteSearchView.swift; sourceTree = "<group>"; };
 		6E7C25CA2C89631843CD27E0 /* TasteMap.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TasteMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70266B9F74CAA33CD4D0ED01 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				3414B81C1894B14575B86B7F /* SeedData.swift */,
 				2670D9B56634D19BDC405620 /* PhotoStore.swift */,
 				1AEBB4CBBDF45808BACA8612 /* AppSecrets.swift */,
+				ABA1840FAFCDD5FE97D501C5 /* GooglePlacesProvider.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -301,6 +304,7 @@
 				0076FAD647F584EA15B892B5 /* SeedData.swift in Sources */,
 				B03E4DC5E1DC7803B4E4525A /* PhotoStore.swift in Sources */,
 				69572C44C59FA5849D3F16FD /* AppSecrets.swift in Sources */,
+				A85EA17EC487393415BB5303 /* GooglePlacesProvider.swift in Sources */,
 				8BDFAFE060DD319039FC4D11 /* TasteMapApp.swift in Sources */,
 				C400417765B6C74F8AFDD1A0 /* TasteMapScreen.swift in Sources */,
 				20B94EBE1342D872FB2D3080 /* TasteSearchView.swift in Sources */,
