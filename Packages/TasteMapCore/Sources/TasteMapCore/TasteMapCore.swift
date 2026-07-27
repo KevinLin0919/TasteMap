@@ -1,12 +1,25 @@
 import Foundation
 
+/// 一次造訪的分數與時間，供 Current Score 計算使用。
+/// 刻意不依賴 SwiftData，讓計分邏輯能獨立測試。
+public struct ScoredVisit: Equatable, Sendable {
+    public let score: Double
+    public let visitedAt: Date
+
+    public init(score: Double, visitedAt: Date) {
+        self.score = score
+        self.visitedAt = visitedAt
+    }
+}
+
 public struct TasteCandidate: Identifiable, Equatable, Sendable {
     public let id: UUID
     public let name: String
     public let category: String
     public let district: String
-    public let averageScore: Double
-    public let tags: [String]
+    public let currentScore: Double
+    public let impressions: [String]
+    public let dishes: [String]
     public let visitCount: Int
 
     public init(
@@ -14,35 +27,75 @@ public struct TasteCandidate: Identifiable, Equatable, Sendable {
         name: String,
         category: String,
         district: String,
-        averageScore: Double,
-        tags: [String],
+        currentScore: Double,
+        impressions: [String] = [],
+        dishes: [String] = [],
         visitCount: Int
     ) {
         self.id = id
         self.name = name
         self.category = category
         self.district = district
-        self.averageScore = averageScore
-        self.tags = tags
+        self.currentScore = currentScore
+        self.impressions = impressions
+        self.dishes = dishes
         self.visitCount = visitCount
     }
 }
 
 public enum ScoreCalculator {
-    public static func average(_ scores: [Double]) -> Double {
-        guard !scores.isEmpty else { return 0 }
-        let value = scores.reduce(0, +) / Double(scores.count)
-        return (value * 10).rounded() / 10
+    /// Visit 分數的合法範圍。見 ADR 0004。
+    public static let range: ClosedRange<Double> = 0...5
+
+    /// 拉桿的預設起始值。記錄的多半是還不錯的店，從中間值起跳等於每次都要往上拉。
+    public static let defaultScore: Double = 4.0
+
+    /// 時間權重的半衰期（月）。見 ADR 0006 —— 使用者傾向探索新店而非頻繁回訪，
+    /// 造訪間隔長，較短的半衰期會讓上一次評價幾乎失效。
+    public static let halfLifeInMonths: Double = 24
+
+    private static let secondsPerMonth: Double = 30.436875 * 24 * 60 * 60
+
+    /// 一間 Place 對外顯示的代表分數：以時間加權推導，近期造訪權重高。
+    ///
+    /// **這不是平均值。** 店家會換廚師、漲價、變吵，使用者的口味也會變；
+    /// 這個數字回答的是「我現在該不該去」，不是「這家店歷史上有多好」。
+    /// 未來的維護者請勿「修正」成算術平均 —— 見 ADR 0006。
+    public static func currentScore(of visits: [ScoredVisit], now: Date = .now) -> Double {
+        guard !visits.isEmpty else { return 0 }
+
+        var weightedSum = 0.0
+        var totalWeight = 0.0
+
+        for visit in visits {
+            let elapsedMonths = max(0, now.timeIntervalSince(visit.visitedAt) / secondsPerMonth)
+            let weight = pow(0.5, elapsedMonths / halfLifeInMonths)
+            weightedSum += visit.score * weight
+            totalWeight += weight
+        }
+
+        // 造訪久遠到權重下溢為零時，退回未加權平均，避免除以零。
+        guard totalWeight > 0 else {
+            return round(visits.map(\.score).reduce(0, +) / Double(visits.count), toPlaces: 1)
+        }
+
+        return round(weightedSum / totalWeight, toPlaces: 1)
     }
 
     public static func label(for score: Double) -> String {
         switch score {
-        case 9.2...: "會想專程再去"
-        case 8.5...: "很喜歡，會推薦"
-        case 7.5...: "不錯，願意再訪"
-        case 6.5...: "有優點，但不一定再去"
-        default: "不太符合我的期待"
+        case 4.7...: "會想專程再去"
+        case 4.2...: "很喜歡，會推薦"
+        case 3.5...: "不錯，願意再訪"
+        case 2.8...: "有優點，但不一定再去"
+        case 1.5...: "不太符合我的期待"
+        default: "不會再來"
         }
+    }
+
+    private static func round(_ value: Double, toPlaces places: Int) -> Double {
+        let factor = pow(10.0, Double(places))
+        return (value * factor).rounded() / factor
     }
 }
 
@@ -61,9 +114,13 @@ public enum TasteSearchEngine {
 
         return candidates
             .filter { candidate in
-                if let minimumScore, candidate.averageScore < minimumScore { return false }
+                if let minimumScore, candidate.currentScore < minimumScore { return false }
                 if tokens.isEmpty { return true }
-                let haystack = ([candidate.name, candidate.category, candidate.district] + candidate.tags)
+                // 搜尋負責「找特定那一間」，所以比對店名、Dish 與 Impression。
+                // 「找某一類」由 Collection 承接。見 ROADMAP 的 M1。
+                let haystack = ([candidate.name, candidate.category, candidate.district]
+                    + candidate.impressions
+                    + candidate.dishes)
                     .joined(separator: " ")
                     .lowercased()
                 return tokens.allSatisfy { token in
@@ -86,8 +143,10 @@ public enum TasteSearchEngine {
         return Double(query[range])
     }
 
+    /// 分數相同時以造訪次數決勝。次數刻意不併入分數本身 —— 混在一起會讓
+    /// 4.5 分不知道代表「很好吃」還是「去很多次」。見 ADR 0006。
     private static func ranking(_ lhs: TasteCandidate, _ rhs: TasteCandidate) -> Bool {
-        if lhs.averageScore != rhs.averageScore { return lhs.averageScore > rhs.averageScore }
+        if lhs.currentScore != rhs.currentScore { return lhs.currentScore > rhs.currentScore }
         return lhs.visitCount > rhs.visitCount
     }
 }

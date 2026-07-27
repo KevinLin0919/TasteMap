@@ -14,13 +14,13 @@ struct PlaceRow: View {
                     Text(place.name)
                         .font(.system(.headline, design: .serif, weight: .semibold))
                     Spacer()
-                    ScoreBadge(score: place.averageScore)
+                    ScoreBadge(score: place.currentScore)
                 }
                 Text("\(place.district) · \(place.category.rawValue)")
                     .font(.caption)
                     .foregroundStyle(TasteTheme.muted)
                 HStack(spacing: 5) {
-                    ForEach(place.topTags.prefix(2), id: \.self) { tag in
+                    ForEach(place.topImpressions.prefix(2), id: \.self) { tag in
                         Text(tag)
                             .font(.caption2)
                             .foregroundStyle(TasteTheme.mossDark)

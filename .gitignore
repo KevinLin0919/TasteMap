@@ -4,3 +4,6 @@ DerivedData/
 *.xcuserstate
 xcuserdata/
 
+
+# 本機下載的 CI 產物（unsigned IPA），僅供 sideload 驗證
+builds/

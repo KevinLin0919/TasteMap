@@ -1,15 +1,18 @@
 import SwiftData
 import SwiftUI
 
+/// 三個分頁各據一個維度，互不重疊：時間、空間、分類。
+///
+/// 搜尋不佔獨立分頁 —— 它負責「找特定那一間」，屬於清單頁頂部的工具，
+/// 而「找某一類」由 Collection 承接。
 enum AppTab: Hashable, CaseIterable {
-    case footprints, map, collections, search
+    case footprints, map, collections
 
     var title: String {
         switch self {
         case .footprints: "足跡"
         case .map: "地圖"
         case .collections: "清單"
-        case .search: "搜尋"
         }
     }
 
@@ -18,7 +21,6 @@ enum AppTab: Hashable, CaseIterable {
         case .footprints: "clock"
         case .map: "map"
         case .collections: "list.bullet"
-        case .search: "magnifyingglass"
         }
     }
 }
@@ -28,82 +30,54 @@ struct RootView: View {
     @State private var showingNewVisit = false
 
     var body: some View {
-        ZStack {
-            TasteTheme.paper.ignoresSafeArea()
+        TabView(selection: $selectedTab) {
+            Tab(AppTab.footprints.title, systemImage: AppTab.footprints.symbol, value: AppTab.footprints) {
+                FootprintsView().recordAction { showingNewVisit = true }
+            }
 
-            Group {
-                switch selectedTab {
-                case .footprints: FootprintsView()
-                case .map: TasteMapScreen()
-                case .collections: CollectionsView()
-                case .search: TasteSearchView()
-                }
+            Tab(AppTab.map.title, systemImage: AppTab.map.symbol, value: AppTab.map) {
+                TasteMapScreen().recordAction { showingNewVisit = true }
+            }
+
+            Tab(AppTab.collections.title, systemImage: AppTab.collections.symbol, value: AppTab.collections) {
+                CollectionsView().recordAction { showingNewVisit = true }
             }
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            TasteTabBar(selection: $selectedTab) { showingNewVisit = true }
-                .padding(.horizontal, 12)
-                .padding(.bottom, 4)
-        }
+        .tint(TasteTheme.mossDark)
         .sheet(isPresented: $showingNewVisit) {
             NewVisitSheet()
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
         }
-        .tint(TasteTheme.mossDark)
     }
 }
 
-private struct TasteTabBar: View {
-    @Binding var selection: AppTab
-    let addVisit: () -> Void
+/// 浮動的「記錄」按鈕。分頁列交給系統的 `TabView` 負責，所以主要動作改用 FAB，
+/// 落在右下角 —— 單手握持時拇指的自然位置。
+private struct RecordActionButton: ViewModifier {
+    let action: () -> Void
 
-    var body: some View {
-        HStack(spacing: 3) {
-            tab(.footprints)
-            tab(.map)
-            addButton
-            tab(.collections)
-            tab(.search)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 8)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 25, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 25, style: .continuous).stroke(.white.opacity(0.65)))
-        .shadow(color: TasteTheme.ink.opacity(0.14), radius: 24, y: 12)
-    }
-
-    private func tab(_ tab: AppTab) -> some View {
-        Button { selection = tab } label: {
-            VStack(spacing: 3) {
-                Image(systemName: tab.symbol).font(.system(size: 18, weight: selection == tab ? .semibold : .regular))
-                Text(tab.title).font(.caption2.weight(.semibold))
-            }
-            .foregroundStyle(selection == tab ? TasteTheme.ink : TasteTheme.muted)
-            .frame(maxWidth: .infinity)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .accessibilityAddTraits(selection == tab ? .isSelected : [])
-    }
-
-    private var addButton: some View {
-        Button(action: addVisit) {
-            VStack(spacing: 2) {
+    func body(content: Content) -> some View {
+        content.overlay(alignment: .bottomTrailing) {
+            Button(action: action) {
                 Image(systemName: "plus")
-                    .font(.system(size: 19, weight: .medium))
+                    .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(.white)
-                    .frame(width: 47, height: 47)
-                    .background(TasteTheme.ink, in: RoundedRectangle(cornerRadius: 17, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: 17, style: .continuous).stroke(.white.opacity(0.75), lineWidth: 2))
-                    .shadow(color: TasteTheme.ink.opacity(0.24), radius: 10, y: 5)
-                Text("記錄").font(.caption2.weight(.bold)).foregroundStyle(TasteTheme.ink)
+                    .frame(width: 58, height: 58)
             }
-            .frame(maxWidth: .infinity)
-            .offset(y: -9)
+            .buttonStyle(.plain)
+            .glassEffect(.regular.tint(TasteTheme.ink).interactive(), in: Circle())
+            .shadow(color: TasteTheme.ink.opacity(0.26), radius: 14, y: 7)
+            .padding(.trailing, 20)
+            .padding(.bottom, 20)
+            .accessibilityLabel("記錄一次新造訪")
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("記錄一次新造訪")
+    }
+}
+
+private extension View {
+    func recordAction(_ action: @escaping () -> Void) -> some View {
+        modifier(RecordActionButton(action: action))
     }
 }
 

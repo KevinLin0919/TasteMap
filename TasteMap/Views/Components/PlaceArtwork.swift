@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct PlaceArtwork: View {
     let place: Place
@@ -14,6 +15,21 @@ struct PlaceArtwork: View {
     }
 
     var body: some View {
+        Group {
+            if let photo = place.coverPhoto, let image = UIImage(data: photo) {
+                Image(uiImage: image).resizable().scaledToFill()
+            } else {
+                generated
+            }
+        }
+        .frame(height: height)
+        .clipped()
+        .accessibilityHidden(true)
+    }
+
+    /// 沒有照片時的 fallback。使用者拍的照片才是真正的封面，見 ADR 0007 ——
+    /// 這組程序生成的漸層只負責在還沒拍照時撐住版面。
+    private var generated: some View {
         ZStack {
             LinearGradient(colors: palette, startPoint: .topLeading, endPoint: .bottomTrailing)
             Circle().fill(.white.opacity(0.25)).frame(width: 90).offset(x: 60, y: -35)
@@ -32,9 +48,6 @@ struct PlaceArtwork: View {
                 .foregroundStyle(.white.opacity(0.7))
                 .offset(x: -60, y: -35)
         }
-        .frame(height: height)
-        .clipped()
-        .accessibilityHidden(true)
     }
 }
 
