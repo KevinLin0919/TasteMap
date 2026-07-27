@@ -7,3 +7,6 @@ xcuserdata/
 
 # 本機下載的 CI 產物（unsigned IPA），僅供 sideload 驗證
 builds/
+
+# Google API 金鑰，不進版控。範本見 Config.example.xcconfig
+Config.xcconfig

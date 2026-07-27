@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  值由 Config.xcconfig 的 GOOGLE_MAPS_API_KEY 於建置時代入。
+	  該檔案不進版控 —— key 打包在 app 裡等於半公開，真正的防線是
+	  Google Cloud 上的 bundle ID 限制與配額上限，不是把它藏起來。
+	-->
+	<key>GMSAPIKey</key>
+	<string>$(GOOGLE_MAPS_API_KEY)</string>
+</dict>
+</plist>
