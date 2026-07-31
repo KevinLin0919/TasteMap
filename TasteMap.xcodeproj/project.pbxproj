@@ -27,6 +27,7 @@
 		A7FA34744038107A71BBF2C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F012EDEB765A1AF270500F7 /* Assets.xcassets */; };
 		BFDDE50BAAF8D75373E64C7F /* TasteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23ACFA0849DFD1D02594AC93 /* TasteTheme.swift */; };
 		C400417765B6C74F8AFDD1A0 /* TasteMapScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C976F8CFA5EA9B71B68DAA2 /* TasteMapScreen.swift */; };
+		F88361927D9A93DB3B1003B0 /* GoogleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3802E47A5E8FEDE52A14A3F3 /* GoogleMapView.swift */; };
 		D4EFFE7FD97B3D4EEEDBF210 /* FootprintsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45E812E4BF0684A0DDAEA08 /* FootprintsView.swift */; };
 		E6751DD8907ECE0AEA7C181F /* PlaceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB75401990E4A869ECC2EFA9 /* PlaceDetailView.swift */; };
 		1446E1960993136AA9302DE1 /* PlacePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C66C7C3D07E6A3E08D7F05C /* PlacePickerView.swift */; };
@@ -51,6 +52,7 @@
 		6E7C25CA2C89631843CD27E0 /* TasteMap.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TasteMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70266B9F74CAA33CD4D0ED01 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
 		7C976F8CFA5EA9B71B68DAA2 /* TasteMapScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteMapScreen.swift; sourceTree = "<group>"; };
+		3802E47A5E8FEDE52A14A3F3 /* GoogleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapView.swift; sourceTree = "<group>"; };
 		8F2D8F6E678F07EF131DCC5C /* TasteMapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteMapApp.swift; sourceTree = "<group>"; };
 		B4B1EAF6115AD3FAC1B2DDB7 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		BCC0C79C19A238764D31F25F /* Visit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Visit.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				7C976F8CFA5EA9B71B68DAA2 /* TasteMapScreen.swift */,
+				3802E47A5E8FEDE52A14A3F3 /* GoogleMapView.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -323,6 +326,7 @@
 				EF7DAC6BD70DFD84F685F5B4 /* CurrentLocation.swift in Sources */,
 				8BDFAFE060DD319039FC4D11 /* TasteMapApp.swift in Sources */,
 				C400417765B6C74F8AFDD1A0 /* TasteMapScreen.swift in Sources */,
+				F88361927D9A93DB3B1003B0 /* GoogleMapView.swift in Sources */,
 				20B94EBE1342D872FB2D3080 /* TasteSearchView.swift in Sources */,
 				BFDDE50BAAF8D75373E64C7F /* TasteTheme.swift in Sources */,
 				2051B27CA94FCAC2935B2D30 /* Visit.swift in Sources */,

@@ -12,6 +12,11 @@ settings:
 packages:
   TasteMapCore:
     path: Packages/TasteMapCore
+  # 底圖必須是 Google 的 —— 條款 §5.3 不允許 Places 資料與非 Google 地圖並用。
+  # 這不是美術選擇，見 ADR 0001。
+  GoogleMaps:
+    url: https://github.com/googlemaps/ios-maps-sdk
+    from: 10.15.0
 targets:
   TasteMap:
     type: application
@@ -20,6 +25,8 @@ targets:
       - path: TasteMap
     dependencies:
       - package: TasteMapCore
+      - package: GoogleMaps
+        product: GoogleMaps
     configFiles:
       Debug: Config.xcconfig
       Release: Config.xcconfig

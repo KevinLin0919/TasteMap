@@ -1,3 +1,4 @@
+import GoogleMaps
 import SwiftData
 import SwiftUI
 
@@ -6,6 +7,12 @@ struct TasteMapApp: App {
     private let container: ModelContainer
 
     init() {
+        // 必須在建立任何 GMS 物件之前呼叫，且只呼叫一次。沒有金鑰時跳過 ——
+        // 地圖會顯示不了，但記錄、清單、足跡全是本機資料，照常運作。
+        if let key = AppSecrets.googleMapsAPIKey {
+            GMSServices.provideAPIKey(key)
+        }
+
         do {
             container = try ModelContainer(for: Place.self, Visit.self)
         } catch {
