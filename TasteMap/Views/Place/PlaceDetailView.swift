@@ -66,7 +66,7 @@ struct PlaceDetailView: View {
     private var content: some View {
         VStack(alignment: .leading, spacing: 18) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("\(place.district) · \(place.category.rawValue)")
+                Text(place.summary)
                     .font(.caption.weight(.bold)).foregroundStyle(TasteTheme.clay)
                 Text(place.name).font(.system(size: 32, weight: .semibold, design: .serif))
                 Text("去過 \(place.visits.count) 次")

@@ -12,6 +12,11 @@ settings:
 packages:
   TasteMapCore:
     path: Packages/TasteMapCore
+  # 底圖必須是 Google 的 —— 條款 §5.3 不允許 Places 資料與非 Google 地圖並用。
+  # 這不是美術選擇，見 ADR 0001。
+  GoogleMaps:
+    url: https://github.com/googlemaps/ios-maps-sdk
+    from: 10.15.0
 targets:
   TasteMap:
     type: application
@@ -20,10 +25,17 @@ targets:
       - path: TasteMap
     dependencies:
       - package: TasteMapCore
+      - package: GoogleMaps
+        product: GoogleMaps
+    configFiles:
+      Debug: Config.xcconfig
+      Release: Config.xcconfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.kevinlin.TasteMap
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: Supporting/Info.plist
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: 記錄造訪時用來找出你附近的店家，省下打字。位置只在裝置上使用，不會上傳。
         INFOPLIST_KEY_CFBundleDisplayName: TasteMap
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.food-and-drink
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES

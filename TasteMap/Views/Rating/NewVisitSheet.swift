@@ -15,7 +15,6 @@ import TasteMapCore
 struct NewVisitSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Place.name) private var places: [Place]
     @Query private var allVisits: [Visit]
 
     private let editing: Visit?
@@ -30,6 +29,7 @@ struct NewVisitSheet: View {
     @State private var note = ""
     @State private var pitch = ""
     @State private var hasLoaded = false
+    @State private var pickingPlace = false
 
     init(initialPlace: Place? = nil) {
         self.initialPlace = initialPlace
@@ -80,35 +80,36 @@ struct NewVisitSheet: View {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
             }
             .safeAreaInset(edge: .bottom) { saveBar }
+            .sheet(isPresented: $pickingPlace) {
+                PlacePickerView { selectedPlace = $0 }
+            }
         }
         .task { loadOnce() }
     }
 
     // MARK: - 第一段
 
+    /// 開啟地點選擇器，而不是列出資料庫既有的地點。
+    ///
+    /// 原本是一個 `Menu`，只列已經存在的 Place —— 也就是說**新的店根本記不了**，
+    /// 這是初版最致命的缺口。現在走 Places：附近、搜尋、或手動建立。
     private var placePicker: some View {
         VStack(alignment: .leading, spacing: 9) {
             Text("地點").font(.headline).foregroundStyle(TasteTheme.ink)
-            Menu {
-                ForEach(places) { place in
-                    Button { selectedPlace = place } label: {
-                        Label(place.name, systemImage: place.category.symbol)
-                    }
-                }
-            } label: {
+            Button { pickingPlace = true } label: {
                 HStack {
-                    Image(systemName: selectedPlace?.category.symbol ?? "mappin")
+                    Image(systemName: selectedPlace?.symbolName ?? "mappin.and.ellipse")
                         .foregroundStyle(TasteTheme.clay)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(selectedPlace?.name ?? "選擇地點")
                             .font(.headline).foregroundStyle(TasteTheme.ink)
-                        if let selectedPlace {
-                            Text("\(selectedPlace.district) · \(selectedPlace.category.rawValue)")
+                        if let selectedPlace, !selectedPlace.summary.isEmpty {
+                            Text(selectedPlace.summary)
                                 .font(.caption).foregroundStyle(TasteTheme.muted)
                         }
                     }
                     Spacer()
-                    Image(systemName: "chevron.up.chevron.down")
+                    Image(systemName: "chevron.right")
                         .font(.caption).foregroundStyle(TasteTheme.muted)
                 }
                 .padding(15).tasteCard()
@@ -303,7 +304,9 @@ struct NewVisitSheet: View {
             note = editing.note
             pitch = editing.pitch
         } else {
-            selectedPlace = initialPlace ?? places.first
+            // 不預設任何一家店。地點是這筆記錄的主體，隨便挑一家當預設值，
+            // 只會讓人在沒注意的情況下把一餐記到錯的地方。
+            selectedPlace = initialPlace
         }
     }
 }

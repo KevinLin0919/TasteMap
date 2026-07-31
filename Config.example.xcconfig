@@ -1,0 +1,9 @@
+// 把這個檔案複製成 Config.xcconfig（不進版控）並填入你自己的金鑰。
+//
+// 取得方式見 docs/GOOGLE-SETUP.md。金鑰必須在 Google Cloud 上限制為
+// iOS bundle ID com.kevinlin.TasteMap，並且只允許 Maps SDK for iOS
+// 與 Places API (New) 兩個 API。
+//
+// 留空也能建置，只是 Places 相關功能會停用。
+
+GOOGLE_MAPS_API_KEY =

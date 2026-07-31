@@ -2,66 +2,95 @@ import Foundation
 import SwiftData
 import TasteMapCore
 
-enum PlaceCategory: String, Codable, CaseIterable, Identifiable {
-    case cafe = "咖啡廳"
-    case restaurant = "餐廳"
-    case dessert = "甜點"
-    case bar = "酒吧"
-    case other = "其他"
-
-    var id: String { rawValue }
-    var symbol: String {
-        switch self {
-        case .cafe: "cup.and.saucer.fill"
-        case .restaurant: "fork.knife"
-        case .dessert: "birthday.cake.fill"
-        case .bar: "wineglass.fill"
-        case .other: "mappin.and.ellipse"
-        }
-    }
-}
-
+/// 一間真實存在的店。
+///
+/// **Place 是租來的，Visit 才是資產。** 只有 `providerPlaceID` 能永久保存；
+/// 名稱、地址、座標、類型全部是向 Place Provider 租用的快取，有保存期限。
+/// 更換供應商時損失的只是這層殼，使用者的評論一個字都不會遺失。見 ADR 0002。
 @Model
 final class Place {
     @Attribute(.unique) var id: UUID
+
+    /// Provider 的識別碼，格式為 `provider:id`（例如 `google:ChIJ...`）。
+    ///
+    /// 帶上來源前綴，是為了日後若新增第二個 Provider 時還分辨得出這串是誰家的。
+    /// 手動建立的地點沒有這個值。條款只允許無限期保存這一項。
+    var providerPlaceID: String?
+
+    // MARK: 以下皆為租來的快取
+
     var name: String
-    var categoryRawValue: String
-    var district: String
+    var address: String
+
+    /// Provider 的穩定類型鍵，例如 `"cafe"`。存這個而不是顯示字串 ——
+    /// 顯示字串會隨語言變，存它等於把今天的語系烤進資料庫。
+    var typeKey: String?
+    /// Provider 已在地化的類型名稱，例如「咖啡廳」。純顯示用。
+    var typeName: String?
+
     var latitude: Double
     var longitude: Double
-    var externalPlaceID: String?
+
+    /// 上次向 Provider 取得快取資料的時間。手動建立的地點為 nil。
+    ///
+    /// 條款 §5.4 只允許座標快取 30 個連續日曆天。見 `needsRefresh`。
+    var cachedAt: Date?
+
     var visualSeed: Int
     var createdAt: Date
     @Relationship(deleteRule: .cascade, inverse: \Visit.place) var visits: [Visit]
 
     init(
         id: UUID = UUID(),
+        providerPlaceID: String? = nil,
         name: String,
-        category: PlaceCategory,
-        district: String,
+        address: String = "",
+        typeKey: String? = nil,
+        typeName: String? = nil,
         latitude: Double,
         longitude: Double,
-        externalPlaceID: String? = nil,
+        cachedAt: Date? = nil,
         visualSeed: Int = 0,
         createdAt: Date = .now,
         visits: [Visit] = []
     ) {
         self.id = id
+        self.providerPlaceID = providerPlaceID
         self.name = name
-        self.categoryRawValue = category.rawValue
-        self.district = district
+        self.address = address
+        self.typeKey = typeKey
+        self.typeName = typeName
         self.latitude = latitude
         self.longitude = longitude
-        self.externalPlaceID = externalPlaceID
+        self.cachedAt = cachedAt
         self.visualSeed = visualSeed
         self.createdAt = createdAt
         self.visits = visits
     }
 
-    var category: PlaceCategory {
-        get { PlaceCategory(rawValue: categoryRawValue) ?? .other }
-        set { categoryRawValue = newValue.rawValue }
+    /// 快取是否已超過條款允許的保存期限。
+    ///
+    /// 手動建立的地點（沒有 provider）永遠不需要刷新 —— 那些資料是使用者自己輸入的，
+    /// 不受 Provider 條款約束。
+    var needsRefresh: Bool {
+        // 手動建立的地點資料是使用者自己輸入的，不受 Provider 條款約束。
+        guard providerPlaceID != nil else { return false }
+        // 有 provider 卻從未取過快取 —— 需要補。
+        guard let cachedAt else { return true }
+        return PlaceCachePolicy.isStale(cachedAt: cachedAt)
     }
+
+    /// 顯示用的一行摘要，例如「咖啡廳 · 中山區」。
+    var summary: String {
+        [typeName, PlaceCachePolicy.locality(from: address)]
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+            .joined(separator: " · ")
+    }
+
+    var symbolName: String { PlaceSymbol.name(forType: typeKey) }
+
+    // MARK: 由 Visit 推導
 
     /// 見 ADR 0006 —— 時間加權的現況分數，**不是平均值**。近期造訪權重高，
     /// 因為它要回答的是「我現在該不該去」。
@@ -70,6 +99,7 @@ final class Place {
             of: visits.map { ScoredVisit(score: $0.score, visitedAt: $0.visitedAt) }
         )
     }
+
     var sortedVisits: [Visit] { visits.sorted { $0.visitedAt > $1.visitedAt } }
     var lastVisitedAt: Date? { sortedVisits.first?.visitedAt }
     var latestNote: String? { sortedVisits.lazy.map(\.note).first { !$0.isEmpty } }
@@ -119,8 +149,8 @@ final class Place {
         TasteCandidate(
             id: id,
             name: name,
-            category: category.rawValue,
-            district: district,
+            typeName: typeName ?? "",
+            address: address,
             currentScore: currentScore,
             impressions: topImpressions,
             dishes: topDishes,

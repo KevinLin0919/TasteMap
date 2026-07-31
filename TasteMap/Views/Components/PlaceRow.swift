@@ -16,7 +16,7 @@ struct PlaceRow: View {
                     Spacer()
                     ScoreBadge(score: place.currentScore)
                 }
-                Text("\(place.district) · \(place.category.rawValue)")
+                Text(place.summary)
                     .font(.caption)
                     .foregroundStyle(TasteTheme.muted)
                 HStack(spacing: 5) {

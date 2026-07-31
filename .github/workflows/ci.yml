@@ -19,6 +19,10 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+      - name: Provide API key config
+        # Config.xcconfig 不進版控。祕密未設定時寫入空值 —— 建置仍會成功，
+        # 只是產出的 IPA 沒有金鑰，Places 功能停用而其餘一切正常。
+        run: echo "GOOGLE_MAPS_API_KEY = ${{ secrets.GOOGLE_MAPS_API_KEY }}" > Config.xcconfig
       - name: Regenerate Xcode project
         # project.yml 是專案結構的唯一事實來源。committed 的 .pbxproj 只是
         # 方便本機開 Xcode 用的，新增檔案時很容易忘記同步 —— 在這裡重新產生，
@@ -40,6 +44,10 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+      - name: Provide API key config
+        # Config.xcconfig 不進版控。祕密未設定時寫入空值 —— 建置仍會成功，
+        # 只是產出的 IPA 沒有金鑰，Places 功能停用而其餘一切正常。
+        run: echo "GOOGLE_MAPS_API_KEY = ${{ secrets.GOOGLE_MAPS_API_KEY }}" > Config.xcconfig
       - name: Regenerate Xcode project
         # project.yml 是專案結構的唯一事實來源。committed 的 .pbxproj 只是
         # 方便本機開 Xcode 用的，新增檔案時很容易忘記同步 —— 在這裡重新產生，

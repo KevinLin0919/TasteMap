@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		0076FAD647F584EA15B892B5 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3414B81C1894B14575B86B7F /* SeedData.swift */; };
 		B03E4DC5E1DC7803B4E4525A /* PhotoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2670D9B56634D19BDC405620 /* PhotoStore.swift */; };
+		69572C44C59FA5849D3F16FD /* AppSecrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEBB4CBBDF45808BACA8612 /* AppSecrets.swift */; };
+		A85EA17EC487393415BB5303 /* GooglePlacesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA1840FAFCDD5FE97D501C5 /* GooglePlacesProvider.swift */; };
+		C762D3858DFE0166D10B21F3 /* PlaceSymbol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9605084BFBB7CD2521A5E11 /* PlaceSymbol.swift */; };
+		B2C8F00E59D7EF68F48235E3 /* Places.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5CFF1F9380A0EEA2A07B684 /* Places.swift */; };
+		EF7DAC6BD70DFD84F685F5B4 /* CurrentLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BEF78195DC29D5EE2DC455 /* CurrentLocation.swift */; };
 		1303E5ED415CD94B7F64117C /* NewVisitSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B7F8AE2AC1414A32C26FCB /* NewVisitSheet.swift */; };
 		2051B27CA94FCAC2935B2D30 /* Visit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC0C79C19A238764D31F25F /* Visit.swift */; };
 		20B94EBE1342D872FB2D3080 /* TasteSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 676079D3DC31EA02FA9112DF /* TasteSearchView.swift */; };
@@ -22,8 +27,10 @@
 		A7FA34744038107A71BBF2C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F012EDEB765A1AF270500F7 /* Assets.xcassets */; };
 		BFDDE50BAAF8D75373E64C7F /* TasteTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23ACFA0849DFD1D02594AC93 /* TasteTheme.swift */; };
 		C400417765B6C74F8AFDD1A0 /* TasteMapScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C976F8CFA5EA9B71B68DAA2 /* TasteMapScreen.swift */; };
+		F88361927D9A93DB3B1003B0 /* GoogleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3802E47A5E8FEDE52A14A3F3 /* GoogleMapView.swift */; };
 		D4EFFE7FD97B3D4EEEDBF210 /* FootprintsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F45E812E4BF0684A0DDAEA08 /* FootprintsView.swift */; };
 		E6751DD8907ECE0AEA7C181F /* PlaceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB75401990E4A869ECC2EFA9 /* PlaceDetailView.swift */; };
+		1446E1960993136AA9302DE1 /* PlacePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C66C7C3D07E6A3E08D7F05C /* PlacePickerView.swift */; };
 		F526DB7E5AB28507C4C20299 /* Place.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE3A014B0ECC0E349D2906A /* Place.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,14 +43,21 @@
 		2AE3A014B0ECC0E349D2906A /* Place.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Place.swift; sourceTree = "<group>"; };
 		3414B81C1894B14575B86B7F /* SeedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedData.swift; sourceTree = "<group>"; };
 		2670D9B56634D19BDC405620 /* PhotoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStore.swift; sourceTree = "<group>"; };
+		1AEBB4CBBDF45808BACA8612 /* AppSecrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSecrets.swift; sourceTree = "<group>"; };
+		ABA1840FAFCDD5FE97D501C5 /* GooglePlacesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GooglePlacesProvider.swift; sourceTree = "<group>"; };
+		A9605084BFBB7CD2521A5E11 /* PlaceSymbol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceSymbol.swift; sourceTree = "<group>"; };
+		D5CFF1F9380A0EEA2A07B684 /* Places.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Places.swift; sourceTree = "<group>"; };
+		98BEF78195DC29D5EE2DC455 /* CurrentLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentLocation.swift; sourceTree = "<group>"; };
 		676079D3DC31EA02FA9112DF /* TasteSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteSearchView.swift; sourceTree = "<group>"; };
 		6E7C25CA2C89631843CD27E0 /* TasteMap.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TasteMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70266B9F74CAA33CD4D0ED01 /* CollectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionsView.swift; sourceTree = "<group>"; };
 		7C976F8CFA5EA9B71B68DAA2 /* TasteMapScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteMapScreen.swift; sourceTree = "<group>"; };
+		3802E47A5E8FEDE52A14A3F3 /* GoogleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapView.swift; sourceTree = "<group>"; };
 		8F2D8F6E678F07EF131DCC5C /* TasteMapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteMapApp.swift; sourceTree = "<group>"; };
 		B4B1EAF6115AD3FAC1B2DDB7 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		BCC0C79C19A238764D31F25F /* Visit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Visit.swift; sourceTree = "<group>"; };
 		CB75401990E4A869ECC2EFA9 /* PlaceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceDetailView.swift; sourceTree = "<group>"; };
+		6C66C7C3D07E6A3E08D7F05C /* PlacePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacePickerView.swift; sourceTree = "<group>"; };
 		EE4F7E2384CC6B5F5F480380 /* TasteMapCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = TasteMapCore; path = Packages/TasteMapCore; sourceTree = SOURCE_ROOT; };
 		F45E812E4BF0684A0DDAEA08 /* FootprintsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootprintsView.swift; sourceTree = "<group>"; };
 		FB919ED8F78826B5D45D95AB /* PlaceArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceArtwork.swift; sourceTree = "<group>"; };
@@ -90,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				7C976F8CFA5EA9B71B68DAA2 /* TasteMapScreen.swift */,
+				3802E47A5E8FEDE52A14A3F3 /* GoogleMapView.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -107,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				CB75401990E4A869ECC2EFA9 /* PlaceDetailView.swift */,
+				6C66C7C3D07E6A3E08D7F05C /* PlacePickerView.swift */,
 			);
 			path = Place;
 			sourceTree = "<group>";
@@ -210,6 +226,11 @@
 			children = (
 				3414B81C1894B14575B86B7F /* SeedData.swift */,
 				2670D9B56634D19BDC405620 /* PhotoStore.swift */,
+				1AEBB4CBBDF45808BACA8612 /* AppSecrets.swift */,
+				ABA1840FAFCDD5FE97D501C5 /* GooglePlacesProvider.swift */,
+				A9605084BFBB7CD2521A5E11 /* PlaceSymbol.swift */,
+				D5CFF1F9380A0EEA2A07B684 /* Places.swift */,
+				98BEF78195DC29D5EE2DC455 /* CurrentLocation.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -292,13 +313,20 @@
 				F526DB7E5AB28507C4C20299 /* Place.swift in Sources */,
 				7908FDC286B3E308AF2CB7E7 /* PlaceArtwork.swift in Sources */,
 				E6751DD8907ECE0AEA7C181F /* PlaceDetailView.swift in Sources */,
+				1446E1960993136AA9302DE1 /* PlacePickerView.swift in Sources */,
 				A6BFE0267526EB84C439EAF5 /* PlaceRow.swift in Sources */,
 				29FD88BACF3140A936844956 /* TokenField.swift in Sources */,
 				5F8E38D7A9A0F105EAAF5E17 /* RootView.swift in Sources */,
 				0076FAD647F584EA15B892B5 /* SeedData.swift in Sources */,
 				B03E4DC5E1DC7803B4E4525A /* PhotoStore.swift in Sources */,
+				69572C44C59FA5849D3F16FD /* AppSecrets.swift in Sources */,
+				A85EA17EC487393415BB5303 /* GooglePlacesProvider.swift in Sources */,
+				C762D3858DFE0166D10B21F3 /* PlaceSymbol.swift in Sources */,
+				B2C8F00E59D7EF68F48235E3 /* Places.swift in Sources */,
+				EF7DAC6BD70DFD84F685F5B4 /* CurrentLocation.swift in Sources */,
 				8BDFAFE060DD319039FC4D11 /* TasteMapApp.swift in Sources */,
 				C400417765B6C74F8AFDD1A0 /* TasteMapScreen.swift in Sources */,
+				F88361927D9A93DB3B1003B0 /* GoogleMapView.swift in Sources */,
 				20B94EBE1342D872FB2D3080 /* TasteSearchView.swift in Sources */,
 				BFDDE50BAAF8D75373E64C7F /* TasteTheme.swift in Sources */,
 				2051B27CA94FCAC2935B2D30 /* Visit.swift in Sources */,

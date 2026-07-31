@@ -1,36 +1,26 @@
-import MapKit
+import CoreLocation
 import SwiftData
 import SwiftUI
+import TasteMapCore
 
 struct TasteMapScreen: View {
+    @Environment(\.modelContext) private var modelContext
     @Query private var places: [Place]
+
     @State private var selectedPlace: Place?
+    @State private var recordingAt: Place?
     @State private var minimumScore = 0.0
-    @State private var camera: MapCameraPosition = .region(
-        MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 25.044, longitude: 121.545), span: MKCoordinateSpan(latitudeDelta: 0.07, longitudeDelta: 0.07))
-    )
 
     private var visiblePlaces: [Place] { places.filter { $0.currentScore >= minimumScore } }
 
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                Map(position: $camera) {
-                    ForEach(visiblePlaces) { place in
-                        Annotation(place.name, coordinate: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude), anchor: .bottom) {
-                            Button { selectedPlace = place } label: {
-                                Text(place.currentScore, format: .number.precision(.fractionLength(1)))
-                                    .font(.system(.subheadline, design: .serif, weight: .bold))
-                                    .foregroundStyle(.white)
-                                    .padding(.horizontal, 11).padding(.vertical, 8)
-                                    .background(place.currentScore >= 4.5 ? TasteTheme.gold : TasteTheme.moss, in: RoundedRectangle(cornerRadius: 13, style: .continuous))
-                                    .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous).stroke(.white, lineWidth: 2))
-                                    .shadow(radius: 6, y: 3)
-                            }
-                        }
-                    }
-                }
-                .mapStyle(.standard(elevation: .flat, emphasis: .muted, pointsOfInterest: .excludingAll))
+                GoogleMapView(
+                    places: visiblePlaces,
+                    onSelectPlace: { selectedPlace = $0 },
+                    onSelectPOI: recordAtPOI
+                )
                 .ignoresSafeArea()
 
                 // 篩選列浮在地圖上，而不是壓在一條不透明的導覽列下面 —— 地圖類畫面
@@ -46,7 +36,32 @@ struct TasteMapScreen: View {
             }
             .toolbar(.hidden, for: .navigationBar)
             .sheet(item: $selectedPlace) { PlaceDetailView(place: $0) }
+            .sheet(item: $recordingAt) { NewVisitSheet(initialPlace: $0) }
         }
+    }
+
+    /// 點底圖上還沒記過的 Google POI，直接開始記錄。
+    ///
+    /// POI 的點擊回傳 place_id、名稱與座標 —— 剛好就是建立一個 Place 需要的全部，
+    /// 不必再打一次 Places API。這是「在地圖上探索、看到就記」的路徑。
+    private func recordAtPOI(placeID: String, name: String, coordinate: CLLocationCoordinate2D) {
+        let providerID = "google:\(placeID)"
+
+        if let existing = places.first(where: { $0.providerPlaceID == providerID }) {
+            recordingAt = existing
+            return
+        }
+
+        let place = Place(
+            providerPlaceID: providerID,
+            name: name,
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude,
+            cachedAt: .now,
+            visualSeed: abs(placeID.hashValue)
+        )
+        modelContext.insert(place)
+        recordingAt = place
     }
 
     private func filterButton(_ title: String, value: Double) -> some View {
